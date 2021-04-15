@@ -12,4 +12,8 @@ ID Issuer (maybe)
 ## Setup
 1. Get [Protocol-Aries](https://github.com/kiva/protocol-aries) working first
 2. Download this repo into a separate folder
-3. TBD
+3. In the fsp directory run `npm install`
+4. In the tro directory run `npm install`
+
+## Running
+tbd
