@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node -r tsconfig-paths/register -r dotenv/config src/main.ts"
+    "start:fsp": "ts-node -r tsconfig-paths/register -r dotenv/config fsp/main.ts",
+    "start:tro": "ts-node -r tsconfig-paths/register -r dotenv/config tro/main.ts"
   },
   "author": "",
   "license": "ISC",
