@@ -12,8 +12,11 @@ ID Issuer (maybe)
 ## Setup
 1. Get [Protocol-Aries](https://github.com/kiva/protocol-aries) working first
 2. Download this repo into a separate folder
-3. In the fsp directory run `npm install`
-4. In the tro directory run `npm install`
+3. Setup to use dotnet.  Suggest looking at [this for now](https://avaloniaui.net/docs)
 
 ## Running
-tbd
+1. Get [Protocol-Aries](https://github.com/kiva/protocol-aries) running.
+   You will probably want to do this in separate console windows.  
+2. In one console window, run `dotnet run --project endpoints/fsp/fsp.csproj`
+3. In another console window, run `dotnet run --project endpoints/tro/tro.csproj`  
+
