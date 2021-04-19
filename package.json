@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:fsp": "ts-node -r tsconfig-paths/register -r dotenv/config fsp/main.ts",
-    "start:tro": "ts-node -r tsconfig-paths/register -r dotenv/config tro/main.ts"
+    "start:tro": "ts-node -r tsconfig-paths/register -r dotenv/config tro/main.ts",
+    "start:example": "ts-node -r tsconfig-paths/register -r dotenv/config example/main.ts"
   },
   "author": "",
   "license": "ISC",

@@ -1,30 +1,29 @@
 import { Logger } from '@nestjs/common';
-import Readline from 'readline';
+import { InputOuput } from '../shared/input.ouput.';
 
 export class Main {
-    private readline: any;
+    private ioHandler: InputOuput;
 
     constructor() {
-        this.readline = Readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
+        this.ioHandler = new InputOuput();
     }
 
-    public async runAsync(): Promise<any> {
+    public run() {
         try {
-            Logger.log(`eventually this will do something`);
+            this.ioHandler.show(`eventually this will do something`);
+            this.ioHandler.read();
+            this.ioHandler.show(`eventually this will do something`);
         } catch (e) {
-            Logger.error(e.stack);
-            Logger.error('-------Fail-------');
+            this.ioHandler.error(e);
         } finally {
-            this.readline.close();
+            this.ioHandler.close();
         }
     }
 }
 
-async function run() {
-    await new Main().runAsync();
+function run() {
+    new Main().run();
 }
 
 run();
+
