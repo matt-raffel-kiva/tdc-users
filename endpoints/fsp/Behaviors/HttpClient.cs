@@ -41,5 +41,13 @@ namespace fsp.Behaviors
 
             return result.Result;
         }
+
+        public static string MakeGetRequestAsText(string url)
+        {
+            Url site = new Url(url);
+            Task<string> result = site.GetStringAsync();
+
+            return result.Result;
+        }
     }
 }

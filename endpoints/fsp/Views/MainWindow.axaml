@@ -17,7 +17,7 @@
         <StackPanel>
             <views:Header />
             <views:TDCConnection DataContext="{Binding Path=Connection}" />
-            <views:IssueOneTimeValue />
+            <views:IssueOneTimeValue DataContext="{Binding Path=OneTimeValue}" />
             <views:SendTransactions />
             <views:CreditReport />
         </StackPanel>

@@ -1,10 +1,7 @@
-
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ReactiveUI;
 using fsp.Behaviors;
 using fsp.Models;
-using ReactiveUI;
+
 
 namespace fsp.ViewModels
 {

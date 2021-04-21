@@ -8,11 +8,12 @@
     >
         <TextBlock>Send OneTimeKey</TextBlock>
         <StackPanel Orientation="Horizontal">
-            <Label>Key:</Label>
-            <TextBox></TextBox>
+            <Label Content="Key" />
+            <TextBox Text="{Binding OneTimeValue}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button>Send</Button>
+            <Button Command="{Binding OnGenerateValue}">Generate Value</Button>
+            <Button Command="{Binding OnSendOneTimeValue}">Send to TDC</Button>
         </StackPanel>
     </StackPanel>
 </UserControl>
