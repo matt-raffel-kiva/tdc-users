@@ -16,8 +16,8 @@
     <Border Background="LightBlue" BorderBrush="Black" BorderThickness="2" Padding="15">
         <StackPanel>
             <views:Header />
-            <views:TDCConnection DataContext="{Binding Path=Connection}" />
-            <views:IssueOneTimeValue DataContext="{Binding Path=OneTimeValue}" />
+            <views:TDCConnection />
+            <views:IssueOneTimeValue />
             <views:SendTransactions />
             <views:CreditReport />
         </StackPanel>

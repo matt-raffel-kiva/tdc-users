@@ -10,7 +10,7 @@
       <StackPanel Orientation="Horizontal">
           <Label>URL:</Label>
           <TextBox Text="{Binding Url}" />
-          <Button Command="{Binding OnConnectTDC}">Go</Button>
+          <Button Command="{Binding OnConnectToTDC}">Go</Button>
       </StackPanel>
       <StackPanel Orientation="Horizontal">
         <TextBlock>Connection Id </TextBlock>
