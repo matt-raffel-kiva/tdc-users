@@ -16,4 +16,8 @@
         <PackageReference Include="Flurl" Version="3.0.1" />
         <PackageReference Include="Flurl.Http" Version="3.0.1" />
     </ItemGroup>
+    <ItemGroup>
+      <None Remove="Views\Styles.xaml" />
+      <AvaloniaResource Include="Views\Styles.xaml" />
+    </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@
              x:Class="fsp.Views.TDCConnection">
     <StackPanel
       >
-      <TextBlock>Connect to TDC</TextBlock>
+      <TextBlock Classes="h2">Connect to TDC</TextBlock>
       <StackPanel Orientation="Horizontal">
           <Label>URL:</Label>
           <TextBox Text="{Binding Url}" />
@@ -14,7 +14,7 @@
       </StackPanel>
       <StackPanel Orientation="Horizontal">
         <TextBlock>Connection Id </TextBlock>
-          <TextBlock Text="{Binding ConnectionId}" />
+        <TextBlock Text="{Binding ConnectionId}" />
       </StackPanel>
   </StackPanel>
 </UserControl>

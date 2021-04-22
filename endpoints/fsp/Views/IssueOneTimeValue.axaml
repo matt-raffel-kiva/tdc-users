@@ -6,7 +6,7 @@
              x:Class="fsp.Views.IssueOneTimeValue">
     <StackPanel
     >
-        <TextBlock>Send OneTimeKey</TextBlock>
+        <TextBlock Classes="h2">Send OneTimeKey</TextBlock>
         <StackPanel Orientation="Horizontal">
             <Label Content="Key" />
             <TextBox Text="{Binding OneTimeValue}" />

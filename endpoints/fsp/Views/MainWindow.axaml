@@ -8,6 +8,9 @@
         x:Class="fsp.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="fsp">
+    <Window.Styles>
+        <StyleInclude Source="/Views/Styles.xaml" />
+    </Window.Styles>
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
