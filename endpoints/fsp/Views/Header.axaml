@@ -4,5 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="fsp.Views.Header">
-    <TextBlock Classes="h1" Text="{Binding AppTitle}"></TextBlock>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Classes="h1" Text="{Binding AppTitle}"></TextBlock>
+        <StackPanel DockPanel.Dock="Bottom">
+            <ProgressBar Value="{Binding ProgressBarValue}" MinWidth="50"></ProgressBar>
+            <TextBlock Text="{Binding Status}"></TextBlock>
+        </StackPanel>
+    </DockPanel>
 </UserControl>

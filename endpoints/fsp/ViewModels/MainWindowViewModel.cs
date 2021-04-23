@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Reactive;
+using System.Threading.Tasks;
+using System.Timers;
 using ReactiveUI;
 using fsp.Behaviors;
 using fsp.Models;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace fsp.ViewModels
@@ -15,6 +18,9 @@ namespace fsp.ViewModels
         private string oneTimeValue = "not set";
         private string tdcTroId = "not set";
         private string tdcFspId = "not set";
+        private string status = string.Empty;
+        private int progressBarValue = 0;
+        private System.Timers.Timer progressTimer = null;
         #endregion
         
         #region ICommands
@@ -24,7 +30,21 @@ namespace fsp.ViewModels
         #endregion
         
         #region public observable data
-        public string AppTitle => "FSP";            
+        public string AppTitle => "FSP";
+
+        [NotNull]
+        public string Status
+        {
+            get => status;
+            set => this.RaiseAndSetIfChanged(ref status, value);
+        }
+
+        public int ProgressBarValue
+        {
+            get => progressBarValue;
+            set => this.RaiseAndSetIfChanged(ref progressBarValue, value);
+        }
+
         public string TDCLocalEndpoint => "http://localhost:3015";  // TODO: this should be configurable
         public string TDCDockerEndPoint => "http://tdc-controller:3015"; // TODO: this could be configurable
         
@@ -73,54 +93,112 @@ namespace fsp.ViewModels
         }
         #endregion
 
+        #region private UI manipulation
+
+        private void StartProgressBar()
+        {
+            Status = String.Empty;
+            ProgressBarValue = 0;
+            if (null == progressTimer)
+            {
+                progressTimer = new Timer();
+                progressTimer.Interval = 250;
+                progressTimer.Elapsed += (sender, args) =>
+                {
+                    ProgressBarValue += 1;
+                    if (ProgressBarValue > 100)
+                        ProgressBarValue = 0;
+                };
+            }
+
+            progressTimer.Start();
+        }
+
+        private void StopProgressBar()
+        {
+            ProgressBarValue = 0;
+            progressTimer.Stop();
+        }
+
+        private async void ExecuteLongRunningJob(string jobName, Action work)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    DateTime start = DateTime.Now;
+                    StartProgressBar();
+                    work();
+
+                    Status = $"{(DateTime.Now - start):ss}s";
+                }
+                catch (Exception ex)
+                {
+                    Status = ex.Message;
+                    System.Diagnostics.Trace.WriteLine($"{jobName} error: {ex.Message}");
+                    System.Diagnostics.Trace.WriteLineIf(ex.InnerException != null,
+                        $"     inner exception {ex.InnerException.Message}");
+                }
+                finally
+                {
+                    StopProgressBar();
+                }
+            });
+        }
+        #endregion
+        
         #region private methods
         private void ConnectTDC()
         {
-            string siteUrl = $"{url}/v2/transaction/register";
-            TDCConnectionResult result =
-                HttpClient.MakePostRequest<TDCConnectionRequest, TDCConnectionResult>(siteUrl, new TDCConnectionRequest()
-                    {
-                        tdcPrefix = "TDC",
-                        tdcEndpoint = TDCDockerEndPoint
-                    }
-                );
-            
-            ConnectionId = result.connectionData.connection_id;
-        }
-        
-        private void GenerateValue()
-        {
-            string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
-            string result =
-                HttpClient.MakeGetRequestAsText(siteUrl);
-            
-            OneTimeValue = result;
-        }
-
-        private void SendOneTimeValue()
-        {
-            try
+            ExecuteLongRunningJob("ConnectTDC", () =>
             {
-                string siteUrl = $"{this.url}/v2/transaction/registerOnetimeKey";
-                IssueOneTimeKeyResponse result =
-                    HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl, new IssueOneTimeKeyRequest()
+                string siteUrl = $"{url}/v2/transaction/register";
+                TDCConnectionResult result =
+                    HttpClient.MakePostRequest<TDCConnectionRequest, TDCConnectionResult>(siteUrl,
+                        new TDCConnectionRequest()
                         {
-                            connectionId = connectionId,
-                            oneTimeKey = oneTimeValue,
+                            tdcPrefix = "TDC",
                             tdcEndpoint = TDCDockerEndPoint
                         }
                     );
 
-                if (!string.IsNullOrEmpty(result.tdcFspId))
-                    TdcFspId = result.tdcFspId;
-                if (!string.IsNullOrEmpty(result.tdcTroId))
-                    TdcTroId = result.tdcTroId;
-            }
-            catch (Exception ex)
+                ConnectionId = result.connectionData.connection_id;
+            });
+        }
+        
+        private void GenerateValue()
+        {
+            ExecuteLongRunningJob("GenerateValue", () =>
             {
-                System.Diagnostics.Trace.WriteLine($"onetime key sent error: {ex.Message}");
-                System.Diagnostics.Trace.WriteLineIf(ex.InnerException != null, $"     inner exception {ex.InnerException.Message}");
-            }
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string result =
+                    HttpClient.MakeGetRequestAsText(siteUrl);
+
+                OneTimeValue = result;
+            });
+        }
+
+        private void SendOneTimeValue()
+        {
+            ExecuteLongRunningJob("SendOneTimeValue", () =>
+                {
+                    StartProgressBar();
+                    string siteUrl = $"{this.url}/v2/transaction/registerOnetimeKey";
+                    IssueOneTimeKeyResponse result =
+                        HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl,
+                            new IssueOneTimeKeyRequest()
+                            {
+                                connectionId = connectionId,
+                                oneTimeKey = oneTimeValue,
+                                tdcEndpoint = TDCDockerEndPoint
+                            }
+                        );
+
+                    if (!string.IsNullOrEmpty(result.tdcFspId))
+                        TdcFspId = result.tdcFspId;
+                    if (!string.IsNullOrEmpty(result.tdcTroId))
+                        TdcTroId = result.tdcTroId;
+                });
         }
         #endregion
     }
