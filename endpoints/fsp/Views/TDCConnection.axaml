@@ -13,8 +13,8 @@
           <Button Command="{Binding OnConnectToTDC}">Go</Button>
       </StackPanel>
       <StackPanel Orientation="Horizontal">
-        <TextBlock>Connection Id </TextBlock>
-        <TextBlock Text="{Binding ConnectionId}" />
+        <TextBlock>Connection Id: </TextBlock>
+        <TextBlock Margin="5,0,0,0" Text="{Binding ConnectionId}" />
       </StackPanel>
   </StackPanel>
 </UserControl>

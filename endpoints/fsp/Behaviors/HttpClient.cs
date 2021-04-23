@@ -13,25 +13,26 @@ namespace fsp.Behaviors
             {
                 settings.OnErrorAsync = HttpClient.HandleFlurlErrorAsync;
                 settings.BeforeCallAsync = HttpClient.HandleBeforeCallAsync;
-                // please note: enabling AfterCallAsync handler causes callers to get null references since 
-                // this method gets the result causing callers to get nothing.  
-                // settings.AfterCallAsync = HttpClient.HandleAfterCallAsync;
+                settings.AfterCallAsync = HttpClient.HandleAfterCallAsync;
             });    
         }
         
         private static async Task HandleAfterCallAsync(FlurlCall call)
         {
-            System.Diagnostics.Trace.WriteLine($"body retrieved {call.Response.GetStringAsync().Result}");
+            // please note: enabling AfterCallAsync handler can cause callers to get null references 
+            // workaround is calling call.Response.ResponseMessage.Content.ReadAsStringAsync  
+            // see https://github.com/tmenier/Flurl/issues/571
+            System.Diagnostics.Trace.WriteLine($"HttpClient.HandleAfterCallAsync() => {call.Response.ResponseMessage.Content.ReadAsStringAsync().Result}");
         }
         
         private static async Task HandleBeforeCallAsync(FlurlCall call)
         {
-            System.Diagnostics.Trace.WriteLine($"body sent {call.RequestBody}");
+            System.Diagnostics.Trace.WriteLine($"HttpClient.HandleBeforeCallAsync() body sent => {call.RequestBody}");
         }
 
         private static async Task HandleFlurlErrorAsync(FlurlCall call)
         {
-            System.Diagnostics.Trace.WriteLine($"http exception: {call.Exception.Message}");
+            System.Diagnostics.Trace.WriteLine($"HttpClient.HandleFlurlErrorAsync() => {call.Exception.Message}");
         }
 
         public static R MakePostRequest<T, R>(string url, T data)
@@ -42,6 +43,14 @@ namespace fsp.Behaviors
             return result.Result;
         }
 
+        public static string MakePostRequestAsText<T>(string url, T data)
+        {
+            Url site = new Url(url);
+            Task<string> result = site.PostJsonAsync(data).ReceiveString();
+
+            return result.Result;
+        }
+        
         public static string MakeGetRequestAsText(string url)
         {
             Url site = new Url(url);

@@ -12,6 +12,12 @@
             <TextBox Text="{Binding OneTimeValue}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
+            <TextBlock>Tro Id:</TextBlock>
+            <TextBlock Margin="5,0,0,0" Text="{Binding TdcTroId}" />
+            <TextBlock Margin="25,0,0,0">Fsp Id:</TextBlock>
+            <TextBlock Margin="5,0,0,0" Text="{Binding TdcFspId}" />
+        </StackPanel>        
+        <StackPanel Orientation="Horizontal">
             <Button Command="{Binding OnGenerateValue}">Generate Value</Button>
             <Button Command="{Binding OnSendOneTimeValue}">Send to TDC</Button>
         </StackPanel>

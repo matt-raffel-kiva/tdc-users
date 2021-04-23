@@ -1,7 +1,9 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Reactive;
 using ReactiveUI;
 using fsp.Behaviors;
 using fsp.Models;
+using Newtonsoft.Json;
 
 namespace fsp.ViewModels
 {
@@ -11,6 +13,8 @@ namespace fsp.ViewModels
         private string url = "http://localhost:3013";
         private string connectionId = "not set";
         private string oneTimeValue = "not set";
+        private string tdcTroId = "not set";
+        private string tdcFspId = "not set";
         #endregion
         
         #region ICommands
@@ -41,6 +45,18 @@ namespace fsp.ViewModels
             get => oneTimeValue; 
             set => this.RaiseAndSetIfChanged(ref oneTimeValue, value);
         }
+
+        public string TdcTroId
+        {
+            get => tdcTroId;
+            set => this.RaiseAndSetIfChanged(ref tdcTroId, value);
+        }
+        
+        public string TdcFspId
+        {
+            get => tdcFspId;
+            set => this.RaiseAndSetIfChanged(ref tdcFspId, value);
+        }
         #endregion
 
         #region public methods
@@ -60,42 +76,51 @@ namespace fsp.ViewModels
         #region private methods
         private void ConnectTDC()
         {
-            string registerUrl = $"{url}/v2/transaction/register";
+            string siteUrl = $"{url}/v2/transaction/register";
             TDCConnectionResult result =
-                HttpClient.MakePostRequest<TDCConnectionRequest, TDCConnectionResult>(registerUrl, new TDCConnectionRequest()
+                HttpClient.MakePostRequest<TDCConnectionRequest, TDCConnectionResult>(siteUrl, new TDCConnectionRequest()
                     {
                         tdcPrefix = "TDC",
                         tdcEndpoint = TDCDockerEndPoint
                     }
                 );
             
-            System.Diagnostics.Trace.WriteLine($"connection retrieved with id {result.connectionData.connection_id}");
             ConnectionId = result.connectionData.connection_id;
         }
         
         private void GenerateValue()
         {
-            string url = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+            string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
             string result =
-                HttpClient.MakeGetRequestAsText(url);
+                HttpClient.MakeGetRequestAsText(siteUrl);
             
-            System.Diagnostics.Trace.WriteLine($"onetimevalue retrieved with '{result}'");
             OneTimeValue = result;
         }
 
         private void SendOneTimeValue()
         {
-            string url = $"{this.url}/v2/transaction/registerOnetimeKey";
-            string result =
-                HttpClient.MakePostRequest<IssueOneTimeKeyRequest, string>(url, new IssueOneTimeKeyRequest()
-                    {
-                        connectionId = connectionId,
-                        oneTimeKey = oneTimeValue,
-                        tdcEndpoint = TDCDockerEndPoint
-                    }
-                );
-            
-            System.Diagnostics.Trace.WriteLine($"onetime key sent results: {result}");
+            try
+            {
+                string siteUrl = $"{this.url}/v2/transaction/registerOnetimeKey";
+                IssueOneTimeKeyResponse result =
+                    HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl, new IssueOneTimeKeyRequest()
+                        {
+                            connectionId = connectionId,
+                            oneTimeKey = oneTimeValue,
+                            tdcEndpoint = TDCDockerEndPoint
+                        }
+                    );
+
+                if (!string.IsNullOrEmpty(result.tdcFspId))
+                    TdcFspId = result.tdcFspId;
+                if (!string.IsNullOrEmpty(result.tdcTroId))
+                    TdcTroId = result.tdcTroId;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine($"onetime key sent error: {ex.Message}");
+                System.Diagnostics.Trace.WriteLineIf(ex.InnerException != null, $"     inner exception {ex.InnerException.Message}");
+            }
         }
         #endregion
     }
