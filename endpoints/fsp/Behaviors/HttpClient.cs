@@ -22,6 +22,9 @@ namespace fsp.Behaviors
             // please note: enabling AfterCallAsync handler can cause callers to get null references 
             // workaround is calling call.Response.ResponseMessage.Content.ReadAsStringAsync  
             // see https://github.com/tmenier/Flurl/issues/571
+            if (null == call.Response || null == call.Response.ResponseMessage || null == call.Response.ResponseMessage.Content)
+                return;
+            
             System.Diagnostics.Trace.WriteLine($"HttpClient.HandleAfterCallAsync() => {call.Response.ResponseMessage.Content.ReadAsStringAsync().Result}");
         }
         

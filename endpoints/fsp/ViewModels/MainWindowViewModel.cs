@@ -5,8 +5,6 @@ using System.Timers;
 using ReactiveUI;
 using fsp.Behaviors;
 using fsp.Models;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace fsp.ViewModels
 {
@@ -24,15 +22,16 @@ namespace fsp.ViewModels
         #endregion
         
         #region ICommands
-        public ReactiveCommand<Unit, Unit> OnConnectToTDC { get; }
-        public ReactiveCommand<Unit, Unit> OnGenerateValue { get; }
-        public ReactiveCommand<Unit, Unit> OnSendOneTimeValue { get; }
+        private ReactiveCommand<Unit, Unit> OnConnectToTDC { get; }
+        private ReactiveCommand<Unit, Unit> OnGenerateValue { get; }
+        private ReactiveCommand<Unit, Unit> OnSendOneTimeValue { get; }
+        private ReactiveCommand<Unit, Unit> OnGetReport { get; }
+        private ReactiveCommand<Unit, Unit> OnCreateTransaction { get; }
         #endregion
         
         #region public observable data
         public string AppTitle => "FSP";
-
-        [NotNull]
+        
         public string Status
         {
             get => status;
@@ -85,6 +84,8 @@ namespace fsp.ViewModels
             OnConnectToTDC = ReactiveCommand.Create(ConnectTDC);
             OnGenerateValue = ReactiveCommand.Create(GenerateValue);
             OnSendOneTimeValue = ReactiveCommand.Create(SendOneTimeValue);
+            OnGetReport = ReactiveCommand.Create(GetReport);
+            OnCreateTransaction = ReactiveCommand.Create(CreateTransaction);
         }
         
         public bool CanOnConnectTDC()
@@ -182,7 +183,6 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("SendOneTimeValue", () =>
                 {
-                    StartProgressBar();
                     string siteUrl = $"{this.url}/v2/transaction/registerOnetimeKey";
                     IssueOneTimeKeyResponse result =
                         HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl,
@@ -199,6 +199,42 @@ namespace fsp.ViewModels
                     if (!string.IsNullOrEmpty(result.tdcTroId))
                         TdcTroId = result.tdcTroId;
                 });
+        }
+
+        private void GetReport()
+        {
+            ExecuteLongRunningJob("GetReport", () =>
+            {
+                string siteUrl = $"{this.url}/v2/transaction/report";
+
+                string result =
+                    HttpClient.MakePostRequestAsText<GetReportRequest>(siteUrl,
+                        new GetReportRequest()
+                        {
+                            tdcFspId = tdcFspId,
+                            tdcTroId = tdcTroId,
+                            tdcEndpoint = TDCDockerEndPoint
+                        }
+                    );
+            });
+        }
+
+        private void CreateTransaction()
+        {
+            ExecuteLongRunningJob("CreateTransaction", () =>
+            {
+                string siteUrl = $"{this.url}/v2/transaction/createTransaction";
+
+                string result =
+                    HttpClient.MakePostRequestAsText<GetReportRequest>(siteUrl,
+                        new GetReportRequest()
+                        {
+                            tdcFspId = tdcFspId,
+                            tdcTroId = tdcTroId,
+                            tdcEndpoint = TDCDockerEndPoint
+                        }
+                    );
+            });
         }
         #endregion
     }

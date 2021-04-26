@@ -8,6 +8,9 @@
         <Setter Property="FontSize" Value="18" />
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
+    <Style Selector="TextBlock.Status">
+        <Setter Property="Foreground" Value="Red"></Setter>
+    </Style>
     <Style Selector="StackPanel">
         <Setter Property="Margin" Value="25, 25, 0, 0" />
     </Style>

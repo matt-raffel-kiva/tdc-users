@@ -4,5 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="fsp.Views.SendTransactions">
-  Transaction screen
+    <StackPanel
+    >
+        <TextBlock Classes="h2">Create A Transaction</TextBlock>
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding OnCreateTransaction}">Go</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+        </StackPanel>
+    </StackPanel>
 </UserControl>

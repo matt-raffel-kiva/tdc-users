@@ -8,7 +8,7 @@
         <TextBlock DockPanel.Dock="Top" Classes="h1" Text="{Binding AppTitle}"></TextBlock>
         <StackPanel DockPanel.Dock="Bottom">
             <ProgressBar Value="{Binding ProgressBarValue}" MinWidth="50"></ProgressBar>
-            <TextBlock Text="{Binding Status}"></TextBlock>
+            <TextBlock Classes="Status" Text="{Binding Status}"></TextBlock>
         </StackPanel>
     </DockPanel>
 </UserControl>

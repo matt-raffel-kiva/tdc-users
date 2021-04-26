@@ -4,11 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="fsp.Views.IssueOneTimeValue">
-    <StackPanel
-    >
+    <StackPanel>
         <TextBlock Classes="h2">Send OneTimeKey</TextBlock>
         <StackPanel Orientation="Horizontal">
-            <Label Content="Key" />
+            <Label Content="Key:" />
             <TextBox Text="{Binding OneTimeValue}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
