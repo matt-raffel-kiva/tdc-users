@@ -27,6 +27,8 @@ namespace fsp.ViewModels
         private ReactiveCommand<Unit, Unit> OnSendOneTimeValue { get; }
         private ReactiveCommand<Unit, Unit> OnGetReport { get; }
         private ReactiveCommand<Unit, Unit> OnCreateTransaction { get; }
+        
+        private ReactiveCommand<Unit, Unit> OnRefreshIds { get; }
         #endregion
         
         #region public observable data
@@ -86,6 +88,7 @@ namespace fsp.ViewModels
             OnSendOneTimeValue = ReactiveCommand.Create(SendOneTimeValue);
             OnGetReport = ReactiveCommand.Create(GetReport);
             OnCreateTransaction = ReactiveCommand.Create(CreateTransaction);
+            OnRefreshIds = ReactiveCommand.Create(RefreshIds);
         }
         
         public bool CanOnConnectTDC()
@@ -234,6 +237,18 @@ namespace fsp.ViewModels
                             tdcEndpoint = TDCDockerEndPoint
                         }
                     );
+            });
+        }
+
+        private void RefreshIds()
+        {
+            ExecuteLongRunningJob("GenerateValue", () =>
+            {
+                string siteUrl = $"{TDCLocalEndpoint}/v2/transactions/ids/{oneTimeValue}";
+                string result =
+                    HttpClient.MakeGetRequestAsText(siteUrl);
+
+                System.Diagnostics.Debug.WriteLine($"RefreshIds got back {result}");
             });
         }
         #endregion

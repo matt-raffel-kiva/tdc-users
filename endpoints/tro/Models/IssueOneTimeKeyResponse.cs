@@ -1,4 +1,4 @@
-namespace fsp.Models
+namespace tro.Models
 {
     public class IssueOneTimeKeyResponse
     {
