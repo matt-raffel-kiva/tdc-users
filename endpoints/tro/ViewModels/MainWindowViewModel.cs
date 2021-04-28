@@ -242,18 +242,20 @@ namespace tro.ViewModels
         {
             ExecuteLongRunningJob("ConnectTDC", () =>
             {
+                // TODO: replace with aries-guardianship-agency api when its fixed/available
+                // it is currently broken (if we can get it fixed, the request type changes)
+                // string siteUrl = $"{GuardianshipEndpoint}/v2/transaction/{AgentId}/register";
                 string siteUrl = $"{TDCLocalEndpoint}/v2/register";
-                string result =
-                    HttpClient.MakePostRequestAsText<TDCConnectionRequest>(siteUrl,
+                TDCConnectionResult result =
+                    HttpClient.MakePostRequest<TDCConnectionRequest, TDCConnectionResult>(siteUrl,
                         new TDCConnectionRequest()
                         {
                             alias = AgentId,
                             invitation = invitation
                         }
                     );
-
-                System.Diagnostics.Debug.WriteLine($"ConnectTDC result {result}");
-                // ConnectionId = result.connectionData.connection_id;
+                
+                ConnectionId = result.connectionData.connection_id;
             });
         }
         
@@ -273,7 +275,8 @@ namespace tro.ViewModels
         {
             ExecuteLongRunningJob("SendOneTimeValue", () =>
                 {
-                    string siteUrl = $"{this.url}/v2/transaction/registerOnetimeKey";
+                    // TODO: replace with aries-guardianship-agency api when its fixed/available
+                    string siteUrl = $"{TDCLocalEndpoint}/v2/register/onetimekey";
                     IssueOneTimeKeyResponse result =
                         HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl,
                             new IssueOneTimeKeyRequest()
@@ -291,6 +294,7 @@ namespace tro.ViewModels
                 });
         }
 
+        [Obsolete]
         private void GetReport()
         {
             ExecuteLongRunningJob("GetReport", () =>
@@ -308,7 +312,8 @@ namespace tro.ViewModels
                     );
             });
         }
-
+        
+        [Obsolete]
         private void CreateTransaction()
         {
             ExecuteLongRunningJob("CreateTransaction", () =>
