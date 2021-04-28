@@ -23,6 +23,7 @@ namespace tro.ViewModels
         private string walletKey = "walletId11";
         private string seed = "000000000000000000000000Steward1";
         private string adminApiKey = "adminApiKey";
+        private CitizenConnectionData invitation = null;
         private int progressBarValue = 0;
         private System.Timers.Timer progressTimer = null;
         #endregion
@@ -35,6 +36,7 @@ namespace tro.ViewModels
         private ReactiveCommand<Unit, Unit> OnCreateTransaction { get; }
         private ReactiveCommand<Unit, Unit> OnRefreshIds { get; }
         private ReactiveCommand<Unit, Unit> OnStartCitizen { get; }
+        private ReactiveCommand<Unit, Unit> OnStopCitizen { get; }
         #endregion
         
         #region public observable data
@@ -132,6 +134,7 @@ namespace tro.ViewModels
             OnCreateTransaction = ReactiveCommand.Create(CreateTransaction);
             OnRefreshIds = ReactiveCommand.Create(RefreshIds);
             OnStartCitizen = ReactiveCommand.Create(StartCitizen);
+            OnStopCitizen = ReactiveCommand.Create(StopCitizen);
         }
         
         public bool CanOnConnectTDC()
@@ -215,6 +218,23 @@ namespace tro.ViewModels
                     );
 
                 System.Diagnostics.Debug.WriteLine($"Start Citizen result {result}");
+                invitation = result.connectionData;
+            });
+        }
+
+        private void StopCitizen()
+        {
+            ExecuteLongRunningJob("StopCitizen", () =>
+            {
+                string siteUrl =  $"{GuardianshipEndpoint}/v1/manager";
+                string result = HttpClient.MakeDeleteRequest<CitizenShutdownRequest>(siteUrl,
+                    new CitizenShutdownRequest()
+                    {
+                        agentId = AgentId
+                    }
+                );
+                
+                System.Diagnostics.Debug.WriteLine($"StopCitizen result {result}");
             });
         }
         
@@ -222,17 +242,18 @@ namespace tro.ViewModels
         {
             ExecuteLongRunningJob("ConnectTDC", () =>
             {
-                string siteUrl = $"{url}/v2/transaction/register";
-                TDCConnectionResult result =
-                    HttpClient.MakePostRequest<TDCConnectionRequest, TDCConnectionResult>(siteUrl,
+                string siteUrl = $"{TDCLocalEndpoint}/v2/register";
+                string result =
+                    HttpClient.MakePostRequestAsText<TDCConnectionRequest>(siteUrl,
                         new TDCConnectionRequest()
                         {
-                            tdcPrefix = "TDC",
-                            tdcEndpoint = TDCDockerEndPoint
+                            alias = AgentId,
+                            invitation = invitation
                         }
                     );
 
-                ConnectionId = result.connectionData.connection_id;
+                System.Diagnostics.Debug.WriteLine($"ConnectTDC result {result}");
+                // ConnectionId = result.connectionData.connection_id;
             });
         }
         

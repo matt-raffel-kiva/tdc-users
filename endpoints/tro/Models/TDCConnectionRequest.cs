@@ -9,7 +9,8 @@ namespace tro.Models
      */
     public class TDCConnectionRequest
     {
-        public string tdcPrefix { get; set; }
-        public string tdcEndpoint { get; set; }
+        public string alias { get; set; }
+        public string identityProfileId { get; set; } = "citizen.identity";
+        public CitizenConnectionData invitation { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
@@ -58,6 +59,14 @@ namespace tro.Behaviors
         {
             Url site = new Url(url);
             Task<string> result = site.GetStringAsync();
+
+            return result.Result;
+        }
+
+        public static string MakeDeleteRequest<T>(string url, T data)
+        {
+            Url site = new Url(url);
+            Task<string> result = site.SendJsonAsync(HttpMethod.Delete, data).ReceiveString();
 
             return result.Result;
         }

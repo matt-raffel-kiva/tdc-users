@@ -38,6 +38,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding OnStartCitizen}">Start Agent</Button>
+            <Button Command="{Binding OnStopCitizen}">Stop Agent</Button>
         </StackPanel>
     </StackPanel>
 </UserControl>
