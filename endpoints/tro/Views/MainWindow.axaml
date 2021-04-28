@@ -19,10 +19,9 @@
     <Border Background="Silver" BorderBrush="Black" BorderThickness="2" Padding="15">
         <StackPanel>
             <views:Header />
+            <views:CitizenSetup />
             <views:TDCConnection />
             <views:IssueOneTimeValue />
-            <views:SendTransactions />
-            <views:CreditReport />
         </StackPanel>
     </Border>
 </Window>

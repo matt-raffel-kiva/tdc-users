@@ -17,6 +17,12 @@ namespace tro.ViewModels
         private string tdcTroId = "not set";
         private string tdcFspId = "not set";
         private string status = string.Empty;
+        private string agentId = "citizen";
+        private string did = "XTv4YCzYj8jqZgL1wVMGGL";
+        private string walletId = "walletId11";
+        private string walletKey = "walletId11";
+        private string seed = "000000000000000000000000Steward1";
+        private string adminApiKey = "adminApiKey";
         private int progressBarValue = 0;
         private System.Timers.Timer progressTimer = null;
         #endregion
@@ -27,8 +33,8 @@ namespace tro.ViewModels
         private ReactiveCommand<Unit, Unit> OnSendOneTimeValue { get; }
         private ReactiveCommand<Unit, Unit> OnGetReport { get; }
         private ReactiveCommand<Unit, Unit> OnCreateTransaction { get; }
-        
         private ReactiveCommand<Unit, Unit> OnRefreshIds { get; }
+        private ReactiveCommand<Unit, Unit> OnStartCitizen { get; }
         #endregion
         
         #region public observable data
@@ -48,7 +54,7 @@ namespace tro.ViewModels
 
         public string TDCLocalEndpoint => "http://localhost:3015";  // TODO: this should be configurable
         public string TDCDockerEndPoint => "http://tdc-controller:3015"; // TODO: this could be configurable
-        
+        public string GuardianshipEndpoint => "http://localhost:3010"; // TODO: this should be configurable
         public string Url
         {
             get => url; 
@@ -78,6 +84,42 @@ namespace tro.ViewModels
             get => tdcFspId;
             set => this.RaiseAndSetIfChanged(ref tdcFspId, value);
         }
+
+        public string AgentId
+        {
+            get => agentId;
+            set => this.RaiseAndSetIfChanged(ref agentId, value);
+        }
+        
+        public string Did
+        {
+            get => did;
+            set => this.RaiseAndSetIfChanged(ref did, value);
+        }
+        
+        public string WalletId
+        {
+            get => walletId;
+            set => this.RaiseAndSetIfChanged(ref walletId, value);
+        }
+        
+        public string WalletKey
+        {
+            get => walletKey;
+            set => this.RaiseAndSetIfChanged(ref walletKey, value);
+        }
+        
+        public string Seed
+        {
+            get => seed;
+            set => this.RaiseAndSetIfChanged(ref seed, value);
+        }
+        
+        public string AdminApiKey
+        {
+            get => adminApiKey;
+            set => this.RaiseAndSetIfChanged(ref adminApiKey, value);
+        }
         #endregion
 
         #region public methods
@@ -89,6 +131,7 @@ namespace tro.ViewModels
             OnGetReport = ReactiveCommand.Create(GetReport);
             OnCreateTransaction = ReactiveCommand.Create(CreateTransaction);
             OnRefreshIds = ReactiveCommand.Create(RefreshIds);
+            OnStartCitizen = ReactiveCommand.Create(StartCitizen);
         }
         
         public bool CanOnConnectTDC()
@@ -152,6 +195,29 @@ namespace tro.ViewModels
         #endregion
         
         #region private methods
+
+        private void StartCitizen()
+        {
+            ExecuteLongRunningJob("Start Citizen", () =>
+            {
+                string siteUrl = $"{GuardianshipEndpoint}/v1/manager";
+                CitizenSetupResult result =
+                    HttpClient.MakePostRequest<CitizenSetupRequest, CitizenSetupResult>(siteUrl,
+                        new CitizenSetupRequest()
+                        {
+                            agentId = AgentId,
+                            adminApiKey = AdminApiKey,
+                            did = Did,
+                            seed = Seed,
+                            walletId = WalletId,
+                            walletKey = WalletKey
+                        }
+                    );
+
+                System.Diagnostics.Debug.WriteLine($"Start Citizen result {result}");
+            });
+        }
+        
         private void ConnectTDC()
         {
             ExecuteLongRunningJob("ConnectTDC", () =>
