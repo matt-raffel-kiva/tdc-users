@@ -268,6 +268,8 @@ namespace tro.ViewModels
         {
             ExecuteLongRunningJob("SendOneTimeValue", () =>
                 {
+                    TdcTroId = "waiting....";
+                    TdcFspId = "waiting....";
                     string siteUrl = $"{GuardianshipEndpoint}/v2/transaction/{AgentId}/registerOnetimeKey";
                     IssueOneTimeKeyResponse result =
                         HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl,

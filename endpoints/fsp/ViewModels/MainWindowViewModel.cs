@@ -186,7 +186,10 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("SendOneTimeValue", () =>
                 {
-                    string siteUrl = $"{this.url}/v2/transaction/registerOnetimeKey";
+                    TdcTroId = "waiting....";
+                    TdcFspId = "waiting....";
+
+                    string siteUrl = $"{url}/v2/transaction/registerOnetimeKey";
                     IssueOneTimeKeyResponse result =
                         HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl,
                             new IssueOneTimeKeyRequest()
