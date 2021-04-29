@@ -244,17 +244,10 @@ namespace tro.ViewModels
             {
                 // TODO: replace with aries-guardianship-agency api when its fixed/available
                 // it is currently broken (if we can get it fixed, the request type changes)
-                // string siteUrl = $"{GuardianshipEndpoint}/v2/transaction/{AgentId}/register";
-                string siteUrl = $"{TDCLocalEndpoint}/v2/register";
-                TDCConnectionResult result =
-                    HttpClient.MakePostRequest<TDCConnectionRequest, TDCConnectionResult>(siteUrl,
-                        new TDCConnectionRequest()
-                        {
-                            alias = AgentId,
-                            invitation = invitation
-                        }
-                    );
-                
+                string siteUrl = $"{GuardianshipEndpoint}/v2/transaction/{AgentId}/register";
+                AgencyConnectionToTdcResult result = HttpClient.MakePostRequest<AgencyConnectToTdcRequest, AgencyConnectionToTdcResult>(siteUrl, 
+                    new AgencyConnectToTdcRequest());
+
                 ConnectionId = result.connectionData.connection_id;
             });
         }
@@ -275,8 +268,7 @@ namespace tro.ViewModels
         {
             ExecuteLongRunningJob("SendOneTimeValue", () =>
                 {
-                    // TODO: replace with aries-guardianship-agency api when its fixed/available
-                    string siteUrl = $"{TDCLocalEndpoint}/v2/register/onetimekey";
+                    string siteUrl = $"{GuardianshipEndpoint}/v2/transaction/{AgentId}/registerOnetimeKey";
                     IssueOneTimeKeyResponse result =
                         HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl,
                             new IssueOneTimeKeyRequest()

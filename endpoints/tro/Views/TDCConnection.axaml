@@ -8,8 +8,6 @@
       >
       <TextBlock Classes="h2">Connect to TDC</TextBlock>
       <StackPanel Orientation="Horizontal">
-          <Label>URL:</Label>
-          <TextBox Text="{Binding Url}" />
           <Button Command="{Binding OnConnectToTDC}">Go</Button>
       </StackPanel>
       <StackPanel Orientation="Horizontal">

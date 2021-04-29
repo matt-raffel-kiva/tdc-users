@@ -15,9 +15,4 @@ namespace tro.Models
         public string connection_id { get; set; }
         public string created_at { get; set; }
     }
-    
-    public class TDCConnectionResult
-    {
-        public ConnectionData connectionData { get; set; }
-    }
 }
