@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Reactive;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Timers;
 using ReactiveUI;
 using fsp.Behaviors;
 using fsp.Models;
+using Newtonsoft.Json;
 
 namespace fsp.ViewModels
 {
@@ -176,7 +178,7 @@ namespace fsp.ViewModels
             {
                 string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
                 string result =
-                    HttpClient.MakeGetRequestAsText(siteUrl);
+                    HttpClient.MakeGetRequest(siteUrl);
 
                 OneTimeValue = result;
             });
@@ -214,7 +216,7 @@ namespace fsp.ViewModels
                 string siteUrl = $"{this.url}/v2/transaction/report";
 
                 string result =
-                    HttpClient.MakePostRequestAsText<GetReportRequest>(siteUrl,
+                    HttpClient.MakePostRequest<GetReportRequest>(siteUrl,
                         new GetReportRequest()
                         {
                             tdcFspId = tdcFspId,
@@ -229,10 +231,10 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("CreateTransaction", () =>
             {
-                string siteUrl = $"{this.url}/v2/transaction/createTransaction";
+                string siteUrl = $"{url}/v2/transaction/createTransaction";
 
                 string result =
-                    HttpClient.MakePostRequestAsText<GetReportRequest>(siteUrl,
+                    HttpClient.MakePostRequest<GetReportRequest>(siteUrl,
                         new GetReportRequest()
                         {
                             tdcFspId = tdcFspId,
@@ -247,11 +249,14 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("GenerateValue", () =>
             {
-                string siteUrl = $"{TDCLocalEndpoint}/v2/transactions/ids/{oneTimeValue}";
-                string result =
-                    HttpClient.MakeGetRequestAsText(siteUrl);
-
-                System.Diagnostics.Debug.WriteLine($"RefreshIds got back {result}");
+                string siteUrl = $"{url}/v2/transaction/ids/{oneTimeValue}";
+                RefreshIdResult result =
+                    HttpClient.MakeGetRequest<RefreshIdResult>(siteUrl);
+                
+                if (!string.IsNullOrEmpty(result.fsp_id))
+                    TdcFspId = result.fsp_id;
+                if (!string.IsNullOrEmpty(result.tdc_id))
+                    TdcTroId = result.tdc_id;
             });
         }
         #endregion

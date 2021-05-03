@@ -258,7 +258,7 @@ namespace tro.ViewModels
             {
                 string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
                 string result =
-                    HttpClient.MakeGetRequestAsText(siteUrl);
+                    HttpClient.MakeGetRequest(siteUrl);
 
                 OneTimeValue = result;
             });
@@ -296,7 +296,7 @@ namespace tro.ViewModels
                 string siteUrl = $"{this.url}/v2/transaction/report";
 
                 string result =
-                    HttpClient.MakePostRequestAsText<GetReportRequest>(siteUrl,
+                    HttpClient.MakePostRequest<GetReportRequest>(siteUrl,
                         new GetReportRequest()
                         {
                             tdcFspId = tdcFspId,
@@ -315,7 +315,7 @@ namespace tro.ViewModels
                 string siteUrl = $"{this.url}/v2/transaction/createTransaction";
 
                 string result =
-                    HttpClient.MakePostRequestAsText<GetReportRequest>(siteUrl,
+                    HttpClient.MakePostRequest<GetReportRequest>(siteUrl,
                         new GetReportRequest()
                         {
                             tdcFspId = tdcFspId,
@@ -332,7 +332,7 @@ namespace tro.ViewModels
             {
                 string siteUrl = $"{TDCLocalEndpoint}/v2/transactions/ids/{oneTimeValue}";
                 string result =
-                    HttpClient.MakeGetRequestAsText(siteUrl);
+                    HttpClient.MakeGetRequest(siteUrl);
 
                 System.Diagnostics.Debug.WriteLine($"RefreshIds got back {result}");
             });

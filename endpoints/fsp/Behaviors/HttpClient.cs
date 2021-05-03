@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
@@ -46,7 +47,7 @@ namespace fsp.Behaviors
             return result.Result;
         }
 
-        public static string MakePostRequestAsText<T>(string url, T data)
+        public static string MakePostRequest<T>(string url, T data)
         {
             Url site = new Url(url);
             Task<string> result = site.PostJsonAsync(data).ReceiveString();
@@ -54,10 +55,25 @@ namespace fsp.Behaviors
             return result.Result;
         }
         
-        public static string MakeGetRequestAsText(string url)
+        public static string MakeGetRequest(string url)
         {
             Url site = new Url(url);
             Task<string> result = site.GetStringAsync();
+
+            return result.Result;
+        }
+        
+        public static T MakeGetRequest<T>(string url)
+        {
+            Url site = new Url(url);
+            Task<T> result = site.GetJsonAsync<T>();
+            return result.Result;
+        }
+        
+        public static string MakeDeleteRequest<T>(string url, T data)
+        {
+            Url site = new Url(url);
+            Task<string> result = site.SendJsonAsync(HttpMethod.Delete, data).ReceiveString();
 
             return result.Result;
         }
