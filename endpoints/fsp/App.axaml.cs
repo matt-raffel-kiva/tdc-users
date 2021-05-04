@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using fsp.ViewModels;
@@ -20,6 +21,7 @@ namespace fsp
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = new MainWindowViewModel(),
+                    SizeToContent = SizeToContent.WidthAndHeight
                 };
             }
 

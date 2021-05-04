@@ -234,12 +234,15 @@ namespace fsp.ViewModels
                 string siteUrl = $"{url}/v2/transaction/createTransaction";
 
                 string result =
-                    HttpClient.MakePostRequest<GetReportRequest>(siteUrl,
-                        new GetReportRequest()
+                    HttpClient.MakePostRequest<CreateTransactionRequest>(siteUrl,
+                        new CreateTransactionRequest()
                         {
-                            tdcFspId = tdcFspId,
-                            tdcTroId = tdcTroId,
-                            tdcEndpoint = TDCDockerEndPoint
+                            fspId = TdcFspId,
+                            eventDate = DateTime.Now.ToString(),
+                            eventJson = "TODO",
+                            eventType = "query",
+                            tdcEndpoint = TDCDockerEndPoint,
+                            fspHash = "TODO"
                         }
                     );
             });
