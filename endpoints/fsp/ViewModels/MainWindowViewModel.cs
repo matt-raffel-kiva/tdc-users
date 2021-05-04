@@ -233,8 +233,8 @@ namespace fsp.ViewModels
             {
                 string siteUrl = $"{url}/v2/transaction/createTransaction";
 
-                string result =
-                    HttpClient.MakePostRequest<CreateTransactionRequest>(siteUrl,
+                CreateTransactionResult result =
+                    HttpClient.MakePostRequest<CreateTransactionRequest, CreateTransactionResult>(siteUrl,
                         new CreateTransactionRequest()
                         {
                             fspId = TdcFspId,
@@ -245,6 +245,8 @@ namespace fsp.ViewModels
                             fspHash = "TODO"
                         }
                     );
+                
+                System.Diagnostics.Debug.WriteLine($"transaction created {result.transactionId}");
             });
         }
 
