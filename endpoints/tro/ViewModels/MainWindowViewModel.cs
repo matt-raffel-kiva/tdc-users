@@ -41,7 +41,8 @@ namespace tro.ViewModels
         
         #region public observable data
         public string AppTitle => "TRO";
-        
+
+        public string AppDesc => "Represents an individual entity or person that would accept transactions. Example transactions would be borrowing money and making payments on the loan.";
         public string Status
         {
             get => status;

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Reactive;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Timers;
@@ -19,15 +22,16 @@ namespace fsp.ViewModels
         private static string WAITING = "waiting";
         private static string ACCEPTED = "accepted";
         private string url = "http://localhost:3013";
-        private string connectionId = "not set";
-        private string oneTimeValue = "not set";
-        private string tdcTroId = "not set";
-        private string tdcFspId = "not set";
-        private string txId = "not set";
-        private string txStatus = "not set";
+        private string connectionId = NOT_SET;
+        private string oneTimeValue = NOT_SET;
+        private string tdcTroId = NOT_SET;
+        private string tdcFspId = NOT_SET;
+        private string txId = NOT_SET;
+        private string txStatus = NOT_SET;
         private string status = string.Empty;
         private string eventData = string.Empty;
         private string eventType = "payment";
+        private string reportId = NOT_SET;
         private int progressBarValue = 0;
         private System.Timers.Timer progressTimer = null;
         #endregion
@@ -41,11 +45,13 @@ namespace fsp.ViewModels
         
         private ReactiveCommand<Unit, Unit> OnRefreshIds { get; }
         private ReactiveCommand<Unit, Unit> OnRefreshTransaction { get; }
+        private ReactiveCommand<Unit, Unit> OnRefreshReport { get; }
         #endregion
         
         #region public observable data
         public string AppTitle => "FSP";
-        
+
+        public string AppDesc => "This represents an entity who issues transactions on the behalf of individuals.  Examples include a bank or NGO.";
         public string Status
         {
             get => status;
@@ -115,6 +121,13 @@ namespace fsp.ViewModels
             set => this.RaiseAndSetIfChanged(ref eventType, value);
         }
 
+        [NotNull]
+        public string ReportId
+        {
+            get => reportId;
+            set => this.RaiseAndSetIfChanged(ref reportId, value);
+        }
+
         #endregion
 
         #region public methods
@@ -127,6 +140,7 @@ namespace fsp.ViewModels
             OnCreateTransaction = ReactiveCommand.Create(CreateTransaction);
             OnRefreshIds = ReactiveCommand.Create(RefreshIds);
             OnRefreshTransaction = ReactiveCommand.Create(RefreshTransaction);
+            OnRefreshReport = ReactiveCommand.Create(RefreshReport);
         }
         
         public bool CanOnConnectTDC()
@@ -227,7 +241,7 @@ namespace fsp.ViewModels
                     TdcTroId = "waiting....";
                     TdcFspId = "waiting....";
 
-                    string siteUrl = $"{url}/v2/transaction/registerOnetimeKey";
+                    string siteUrl = $"{url}/v2/transaction/nonce";
                     IssueOneTimeKeyResponse result =
                         HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl,
                             new IssueOneTimeKeyRequest()
@@ -250,16 +264,20 @@ namespace fsp.ViewModels
             ExecuteLongRunningJob("GetReport", () =>
             {
                 string siteUrl = $"{this.url}/v2/transaction/report";
-
-                string result =
-                    HttpClient.MakePostRequest<GetReportRequest>(siteUrl,
-                        new GetReportRequest()
+                ReportId = WAITING;
+                
+                StartGetReportResult result =
+                    HttpClient.MakePostRequest<StartGetReportRequest, StartGetReportResult>(siteUrl,
+                        new StartGetReportRequest()
                         {
-                            tdcFspId = tdcFspId,
-                            tdcTroId = tdcTroId,
+                            fspTdcId = tdcFspId,
+                            troTdcId = tdcTroId,
                             tdcEndpoint = TDCDockerEndPoint
                         }
                     );
+                
+                System.Diagnostics.Debug.WriteLine($"GetReport results {result.reportId}");
+                ReportId = result.reportId;
             });
         }
 
@@ -267,7 +285,7 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("CreateTransaction", () =>
             {
-                string siteUrl = $"{url}/v2/transaction/createTransaction";
+                string siteUrl = $"{url}/v2/transaction/create";
                 TxId = WAITING;
                 TxStatus = WAITING;
 
@@ -276,11 +294,11 @@ namespace fsp.ViewModels
                         new CreateTransactionRequest()
                         {
                             fspId = TdcFspId,
-                            eventDate = DateTime.Now.ToString(),
+                            eventDate = DateTime.Now.ToString(CultureInfo.InvariantCulture),
                             eventJson = eventData,
                             eventType = eventType,
                             tdcEndpoint = TDCDockerEndPoint,
-                            fspHash = "TODO"
+                            fspHash = ComputeHash(eventData)
                         }
                     );
                 
@@ -316,6 +334,42 @@ namespace fsp.ViewModels
                 // then we can assume its accepted
                 TxStatus = ACCEPTED;
             });            
+        }
+
+        private void RefreshReport()
+        {
+            ExecuteLongRunningJob("RefreshTransaction", () =>
+            {
+                string siteUrl = $"{url}/v2/transaction/{txId}";
+                RefreshTransactionResult result =
+                    HttpClient.MakeGetRequest<RefreshTransactionResult>(siteUrl);
+
+                // TODO: like to make this more detailed.  for now, if we get a transaction back
+                // then we can assume its accepted
+                TxStatus = ACCEPTED;
+            });       
+        }
+        private string ComputeHash(string input)
+        {
+            //
+            // https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.hashalgorithm.computehash?view=netframework-4.8
+            //
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // Convert the input string to a byte array and compute the hash.
+                byte[] data = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+                var hashBuilder = new StringBuilder();
+
+                // Loop through each byte of the hashed data 
+                // and format each one as a hexadecimal string.
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    hashBuilder.Append(data[i].ToString("x2"));
+                }
+                
+                return hashBuilder.ToString();
+            }
         }
         #endregion
     }
