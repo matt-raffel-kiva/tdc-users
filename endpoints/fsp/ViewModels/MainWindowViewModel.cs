@@ -13,11 +13,16 @@ namespace fsp.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         #region private data
+
+        private static string NOT_SET = "not set";
+        private static string WAITING = "waiting";
         private string url = "http://localhost:3013";
         private string connectionId = "not set";
         private string oneTimeValue = "not set";
         private string tdcTroId = "not set";
         private string tdcFspId = "not set";
+        private string txId = "not set";
+        private string txStatus = "not set";
         private string status = string.Empty;
         private int progressBarValue = 0;
         private System.Timers.Timer progressTimer = null;
@@ -31,6 +36,7 @@ namespace fsp.ViewModels
         private ReactiveCommand<Unit, Unit> OnCreateTransaction { get; }
         
         private ReactiveCommand<Unit, Unit> OnRefreshIds { get; }
+        private ReactiveCommand<Unit, Unit> OnRefreshTransaction { get; }
         #endregion
         
         #region public observable data
@@ -80,6 +86,18 @@ namespace fsp.ViewModels
             get => tdcFspId;
             set => this.RaiseAndSetIfChanged(ref tdcFspId, value);
         }
+
+        public string TxId
+        {
+            get => txId;
+            set => this.RaiseAndSetIfChanged(ref txId, value);
+        }
+
+        public string TxStatus
+        {
+            get => txStatus;
+            set => this.RaiseAndSetIfChanged(ref txStatus, value);
+        }
         #endregion
 
         #region public methods
@@ -91,6 +109,7 @@ namespace fsp.ViewModels
             OnGetReport = ReactiveCommand.Create(GetReport);
             OnCreateTransaction = ReactiveCommand.Create(CreateTransaction);
             OnRefreshIds = ReactiveCommand.Create(RefreshIds);
+            OnRefreshTransaction = ReactiveCommand.Create(RefreshTransaction);
         }
         
         public bool CanOnConnectTDC()
@@ -232,6 +251,8 @@ namespace fsp.ViewModels
             ExecuteLongRunningJob("CreateTransaction", () =>
             {
                 string siteUrl = $"{url}/v2/transaction/createTransaction";
+                TxId = WAITING;
+                TxStatus = WAITING;
 
                 CreateTransactionResult result =
                     HttpClient.MakePostRequest<CreateTransactionRequest, CreateTransactionResult>(siteUrl,
@@ -247,6 +268,7 @@ namespace fsp.ViewModels
                     );
                 
                 System.Diagnostics.Debug.WriteLine($"transaction created {result.transactionId}");
+                TxId = result.transactionId;
             });
         }
 
@@ -263,6 +285,11 @@ namespace fsp.ViewModels
                 if (!string.IsNullOrEmpty(result.tdc_id))
                     TdcTroId = result.tdc_id;
             });
+        }
+
+        private void RefreshTransaction()
+        {
+            
         }
         #endregion
     }
