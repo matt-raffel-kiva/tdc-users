@@ -17,11 +17,22 @@
     </Design.DataContext>
 
     <Border Background="Silver" BorderBrush="Black" BorderThickness="2" Padding="15">
-        <StackPanel>
-            <views:Header />
-            <views:CitizenSetup />
-            <views:TDCConnection />
-            <views:IssueOneTimeValue />
-        </StackPanel>
+        <DockPanel>
+            <views:Header DockPanel.Dock="Top" />
+            <TabControl>
+                <TabItem Header="EKYC">
+                    <views:CitizenSetup />
+                </TabItem>
+                <TabItem Header="Setup #1">
+                    <views:TDCConnection />
+                </TabItem>
+                <TabItem Header="Setup #2">
+                    <views:IssueOneTimeValue />
+                </TabItem>
+                <TabItem Header="Tx">
+                    <TextBlock>TBD</TextBlock>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
     </Border>
 </Window>

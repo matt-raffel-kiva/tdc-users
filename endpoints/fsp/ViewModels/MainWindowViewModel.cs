@@ -6,6 +6,7 @@ using System.Timers;
 using ReactiveUI;
 using fsp.Behaviors;
 using fsp.Models;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace fsp.ViewModels
@@ -16,6 +17,7 @@ namespace fsp.ViewModels
 
         private static string NOT_SET = "not set";
         private static string WAITING = "waiting";
+        private static string ACCEPTED = "accepted";
         private string url = "http://localhost:3013";
         private string connectionId = "not set";
         private string oneTimeValue = "not set";
@@ -24,6 +26,8 @@ namespace fsp.ViewModels
         private string txId = "not set";
         private string txStatus = "not set";
         private string status = string.Empty;
+        private string eventData = string.Empty;
+        private string eventType = "payment";
         private int progressBarValue = 0;
         private System.Timers.Timer progressTimer = null;
         #endregion
@@ -98,6 +102,19 @@ namespace fsp.ViewModels
             get => txStatus;
             set => this.RaiseAndSetIfChanged(ref txStatus, value);
         }
+        
+        public string EventData
+        {
+            get => eventData;
+            set => this.RaiseAndSetIfChanged(ref eventData, value);
+        }
+        
+        public string EventType
+        {
+            get => eventType;
+            set => this.RaiseAndSetIfChanged(ref eventType, value);
+        }
+
         #endregion
 
         #region public methods
@@ -260,8 +277,8 @@ namespace fsp.ViewModels
                         {
                             fspId = TdcFspId,
                             eventDate = DateTime.Now.ToString(),
-                            eventJson = "TODO",
-                            eventType = "query",
+                            eventJson = eventData,
+                            eventType = eventType,
                             tdcEndpoint = TDCDockerEndPoint,
                             fspHash = "TODO"
                         }
@@ -274,7 +291,7 @@ namespace fsp.ViewModels
 
         private void RefreshIds()
         {
-            ExecuteLongRunningJob("GenerateValue", () =>
+            ExecuteLongRunningJob("RefreshIds", () =>
             {
                 string siteUrl = $"{url}/v2/transaction/ids/{oneTimeValue}";
                 RefreshIdResult result =
@@ -289,7 +306,16 @@ namespace fsp.ViewModels
 
         private void RefreshTransaction()
         {
-            
+            ExecuteLongRunningJob("RefreshTransaction", () =>
+            {
+                string siteUrl = $"{url}/v2/transaction/{txId}";
+                RefreshTransactionResult result =
+                    HttpClient.MakeGetRequest<RefreshTransactionResult>(siteUrl);
+
+                // TODO: like to make this more detailed.  for now, if we get a transaction back
+                // then we can assume its accepted
+                TxStatus = ACCEPTED;
+            });            
         }
         #endregion
     }

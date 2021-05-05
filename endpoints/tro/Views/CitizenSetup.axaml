@@ -6,6 +6,8 @@
              x:Class="tro.Views.CitizenSetup">
     <StackPanel >
         <TextBlock Classes="h2">Citizen Agent</TextBlock>
+        <TextBlock Classes="h3">This step represents some form of onboarding or eKyc authentication that ensures a citizen is correctly
+established in the Kiva identity system.</TextBlock>
         <StackPanel Classes="editor" Orientation="Horizontal">
             <StackPanel Orientation="Horizontal">
                 <Label>AgentId:</Label>

@@ -7,6 +7,8 @@
     <StackPanel
       >
       <TextBlock Classes="h2">Connect to TDC</TextBlock>
+      <TextBlock Classes="h3" TextWrapping="Wrap" >This is a setup step that configures the individual (TRO) to use the transaction system. It is only needed to be run once
+for each FSP the individual conducts business with.</TextBlock>
       <StackPanel Orientation="Horizontal">
           <Label>URL:</Label>
           <TextBox Text="{Binding Url}" />

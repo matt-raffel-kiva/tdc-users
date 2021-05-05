@@ -5,7 +5,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="tro.Views.IssueOneTimeValue">
     <StackPanel>
-        <TextBlock Classes="h2">Send OneTimeKey</TextBlock>
+        <TextBlock Classes="h2">Send Nonce</TextBlock>
+        <TextBlock Classes="h3">This step is required for each new account that created in the FSP.  It is used to create a blind connection between the FSP and a individual. The value must be the same between the FSP and the TRO.</TextBlock>
         <StackPanel Orientation="Horizontal">
             <Label Content="Key:" />
             <TextBox Text="{Binding OneTimeValue}" />
