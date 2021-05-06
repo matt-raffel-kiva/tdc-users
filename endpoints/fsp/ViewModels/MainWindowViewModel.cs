@@ -32,6 +32,8 @@ namespace fsp.ViewModels
         private string eventData = string.Empty;
         private string eventType = "payment";
         private string reportId = NOT_SET;
+        private string reportStatus = NOT_SET;
+        private string reportData = NOT_SET;
         private int progressBarValue = 0;
         private System.Timers.Timer progressTimer = null;
         #endregion
@@ -46,6 +48,7 @@ namespace fsp.ViewModels
         private ReactiveCommand<Unit, Unit> OnRefreshIds { get; }
         private ReactiveCommand<Unit, Unit> OnRefreshTransaction { get; }
         private ReactiveCommand<Unit, Unit> OnRefreshReport { get; }
+        private ReactiveCommand<Unit, Unit> OnRetrieveReport { get; }
         #endregion
         
         #region public observable data
@@ -121,11 +124,22 @@ namespace fsp.ViewModels
             set => this.RaiseAndSetIfChanged(ref eventType, value);
         }
 
-        [NotNull]
         public string ReportId
         {
             get => reportId;
             set => this.RaiseAndSetIfChanged(ref reportId, value);
+        }
+        
+        public string ReportStatus
+        {
+            get => reportStatus;
+            set => reportStatus = this.RaiseAndSetIfChanged(ref reportStatus, value);
+        }
+        
+        public string ReportData
+        {
+            get => reportData;
+            set => reportData = this.RaiseAndSetIfChanged(ref reportData, value);
         }
 
         #endregion
@@ -141,6 +155,7 @@ namespace fsp.ViewModels
             OnRefreshIds = ReactiveCommand.Create(RefreshIds);
             OnRefreshTransaction = ReactiveCommand.Create(RefreshTransaction);
             OnRefreshReport = ReactiveCommand.Create(RefreshReport);
+            OnRetrieveReport = ReactiveCommand.Create(RetrieveReport);
         }
         
         public bool CanOnConnectTDC()
@@ -338,16 +353,31 @@ namespace fsp.ViewModels
 
         private void RefreshReport()
         {
-            ExecuteLongRunningJob("RefreshTransaction", () =>
+            ExecuteLongRunningJob("RefreshReport", () =>
             {
-                string siteUrl = $"{url}/v2/transaction/{txId}";
-                RefreshTransactionResult result =
-                    HttpClient.MakeGetRequest<RefreshTransactionResult>(siteUrl);
-
-                // TODO: like to make this more detailed.  for now, if we get a transaction back
-                // then we can assume its accepted
-                TxStatus = ACCEPTED;
+                ReportStatus = NOT_SET;
+                ReportData = NOT_SET;
+                string siteUrl = $"{url}/v2/transaction/report/{reportId}/status";
+                GetReportResult result =
+                    HttpClient.MakeGetRequest<GetReportResult>(siteUrl);
+                
+                ReportStatus = ACCEPTED;
             });       
+        }
+
+        private void RetrieveReport()
+        {
+            ExecuteLongRunningJob("RefreshReport", () =>
+            {
+                ReportData = NOT_SET;
+                string siteUrl = $"{url}/v2/transaction/report/{reportId}/status";
+                GetReportResult result =
+                    HttpClient.MakeGetRequest<GetReportResult>(siteUrl);
+
+                ReportStatus = ACCEPTED;
+                ReportData = result.content;
+            });   
+            
         }
         private string ComputeHash(string input)
         {
@@ -368,7 +398,7 @@ namespace fsp.ViewModels
                     hashBuilder.Append(data[i].ToString("x2"));
                 }
                 
-                return hashBuilder.ToString();
+                return hashBuilder.ToString().Substring(0, 32);
             }
         }
         #endregion

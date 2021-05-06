@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="fsp.Views.CreditReport">
-    <StackPanel
-    >
+    <StackPanel>
         <TextBlock Classes="h2">Get Transaction Report</TextBlock>
         <TextBlock Classes="h3">
             The transaction report provides the FSP with transaction report for a citizen.  For the FSP,
@@ -17,10 +16,16 @@ the transaction report is the value of our transaction system
         <StackPanel Orientation="Horizontal">
             <TextBlock>Report Id:</TextBlock>
             <TextBlock Margin="5,0,0,0" Text="{Binding ReportId}" />
+            <TextBlock Margin="25,0,0,0">Status: </TextBlock>
+            <TextBlock Margin="5,0,0,0" Text="{Binding ReportStatus}" />
         </StackPanel>        
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding OnRefreshReport}">Refresh Report</Button>
             <Button Command="{Binding OnRetrieveReport}">Retrieve</Button>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Report" />
+            <TextBlock Text="{Binding ReportData}" TextWrapping="WrapWithOverflow" />
         </StackPanel>
     </StackPanel>
 </UserControl>
