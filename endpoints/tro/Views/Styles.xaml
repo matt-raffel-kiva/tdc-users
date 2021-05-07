@@ -13,6 +13,9 @@
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="Margin" Value="10, 10, 0, 10" />
     </Style>
+    <Style Selector="TextBlock.h4">
+        <Setter Property="FontSize" Value="10" />
+    </Style>
     <Style Selector="TextBlock.Status">
         <Setter Property="Foreground" Value="Red"></Setter>
     </Style>

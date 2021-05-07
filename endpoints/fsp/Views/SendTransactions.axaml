@@ -12,6 +12,10 @@
 are precipitated by a customer action, such as making a payment.  Examples of transactions include opening an account,
 making a payment, or late fees.            
         </TextBlock>
+        <StackPanel Classes="h4" Orientation="Horizontal" HorizontalAlignment="Left">
+            <TextBlock>Credential Created:</TextBlock>
+            <TextBlock Margin="5,0,0,0">Credit-Event</TextBlock>
+        </StackPanel>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <TextBlock>Transaction Type:</TextBlock>

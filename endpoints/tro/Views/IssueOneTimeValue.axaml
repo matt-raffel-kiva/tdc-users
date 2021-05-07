@@ -7,6 +7,10 @@
     <StackPanel>
         <TextBlock Classes="h2">Send Nonce</TextBlock>
         <TextBlock Classes="h3">This step is required for each new account that created in the FSP.  This step is like a handshake between the FSP and individual (TRO). The value must be the same between the FSP and the TRO.</TextBlock>
+        <StackPanel Classes="h4" Orientation="Horizontal" HorizontalAlignment="Left">
+            <TextBlock>Credential Created:</TextBlock>
+            <TextBlock Margin="5,0,0,0">Credit-Grant</TextBlock>
+        </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Label Content="Key:" />
             <TextBox Text="{Binding OneTimeValue}" />
