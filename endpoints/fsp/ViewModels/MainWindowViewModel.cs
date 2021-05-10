@@ -280,6 +280,8 @@ namespace fsp.ViewModels
             {
                 string siteUrl = $"{this.url}/v2/transaction/report";
                 ReportId = WAITING;
+                ReportStatus = WAITING;
+                ReportData = NOT_SET;
                 
                 StartGetReportResult result =
                     HttpClient.MakePostRequest<StartGetReportRequest, StartGetReportResult>(siteUrl,
@@ -355,7 +357,7 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("RefreshReport", () =>
             {
-                ReportStatus = NOT_SET;
+                ReportStatus = WAITING;
                 ReportData = NOT_SET;
                 string siteUrl = $"{url}/v2/transaction/report/{reportId}/status";
                 GetReportResult result =
