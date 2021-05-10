@@ -305,17 +305,18 @@ namespace fsp.ViewModels
                 string siteUrl = $"{url}/v2/transaction/create";
                 TxId = WAITING;
                 TxStatus = WAITING;
+                string now = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 
                 CreateTransactionResult result =
                     HttpClient.MakePostRequest<CreateTransactionRequest, CreateTransactionResult>(siteUrl,
                         new CreateTransactionRequest()
                         {
                             fspId = TdcFspId,
-                            eventDate = DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                            eventDate = now,
                             eventJson = eventData,
                             eventType = eventType,
                             tdcEndpoint = TDCDockerEndPoint,
-                            fspHash = ComputeHash(eventData)
+                            fspHash = ComputeHash($"{now}{eventData}")
                         }
                     );
                 
