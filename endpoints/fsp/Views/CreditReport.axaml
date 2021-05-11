@@ -20,7 +20,7 @@ the transaction report is the value of our transaction system
             <TextBlock Margin="5,0,0,0" Text="{Binding ReportStatus}" />
         </StackPanel>        
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding OnRefreshReport}">Refresh Report</Button>
+            <Button Command="{Binding OnRefreshReport}">Refresh Status</Button>
             <Button Command="{Binding OnRetrieveReport}">Retrieve</Button>
         </StackPanel>
         <StackPanel Orientation="Vertical">
