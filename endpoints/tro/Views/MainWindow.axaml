@@ -23,10 +23,10 @@
                 <TabItem Header="EKYC">
                     <views:CitizenSetup />
                 </TabItem>
-                <TabItem Header="Setup #1">
+                <TabItem Header="Setup">
                     <views:TDCConnection />
                 </TabItem>
-                <TabItem Header="Setup #2">
+                <TabItem Header="Connect">
                     <views:IssueOneTimeValue />
                 </TabItem>
                 <TabItem Header="Tx">

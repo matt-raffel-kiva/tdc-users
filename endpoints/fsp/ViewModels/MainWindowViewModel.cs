@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Reactive;
 using System.Security.Cryptography;
 using System.Text;
@@ -193,28 +194,42 @@ namespace fsp.ViewModels
 
         private async void ExecuteLongRunningJob(string jobName, Action work)
         {
-            await Task.Run(() =>
+            try
             {
-                try
+                await Task.Run(() =>
                 {
-                    DateTime start = DateTime.Now;
-                    StartProgressBar();
-                    work();
+                    try
+                    {
+                        DateTime start = DateTime.Now;
+                        StartProgressBar();
+                        work();
 
-                    Status = $"{(DateTime.Now - start):ss}s";
-                }
-                catch (Exception ex)
-                {
-                    Status = ex.Message;
-                    System.Diagnostics.Trace.WriteLine($"{jobName} error: {ex.Message}");
-                    System.Diagnostics.Trace.WriteLineIf(ex.InnerException != null,
-                        $"     inner exception {ex.InnerException.Message}");
-                }
-                finally
-                {
-                    StopProgressBar();
-                }
-            });
+                        Status = $"{(DateTime.Now - start):ss}s";
+                    }
+                    catch (Exception ex)
+                    {
+                        Status = ex.Message;
+                        System.Diagnostics.Trace.WriteLine($"{jobName} error: {ex.Message}");
+                        System.Diagnostics.Trace.WriteLineIf(ex.InnerException != null,
+                            $"     inner exception {ex.InnerException.Message}");
+                    }
+                    finally
+                    {
+                        StopProgressBar();
+                    }
+                });
+            }
+            catch (Exception oex)
+            {
+                Status = oex.Message;
+                System.Diagnostics.Trace.WriteLine($"{jobName} error: {oex.Message}");
+                System.Diagnostics.Trace.WriteLineIf(oex.InnerException != null,
+                    $"     inner exception {oex.InnerException.Message}");
+            }
+            finally
+            {
+                StopProgressBar();
+            }
         }
         #endregion
         
@@ -234,6 +249,7 @@ namespace fsp.ViewModels
                     );
 
                 ConnectionId = result.connectionData.connection_id;
+                System.Diagnostics.Debug.WriteLine($"connection id created '{ConnectionId}'");
             });
         }
         
@@ -332,7 +348,12 @@ namespace fsp.ViewModels
                 string siteUrl = $"{url}/v2/transaction/ids/{oneTimeValue}";
                 RefreshIdResult result =
                     HttpClient.MakeGetRequest<RefreshIdResult>(siteUrl);
-                
+                if (null == result)
+                {
+                    TdcFspId = "RefreshIds got no results back";
+                    return;
+                }
+
                 if (!string.IsNullOrEmpty(result.fsp_id))
                     TdcFspId = result.fsp_id;
                 if (!string.IsNullOrEmpty(result.tdc_id))
