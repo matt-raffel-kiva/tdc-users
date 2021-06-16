@@ -31,6 +31,7 @@ namespace fsp.ViewModels
         private string txStatus = NOT_SET;
         private string status = string.Empty;
         private string eventData = string.Empty;
+        private string amount = string.Empty;
         private string eventType = "payment";
         private string reportId = NOT_SET;
         private string reportStatus = NOT_SET;
@@ -112,7 +113,12 @@ namespace fsp.ViewModels
             get => txStatus;
             set => this.RaiseAndSetIfChanged(ref txStatus, value);
         }
-        
+
+        public string Amount
+        {
+            get => amount;
+            set => this.RaiseAndSetIfChanged(ref amount, value);
+        }
         public string EventData
         {
             get => eventData;
@@ -328,9 +334,11 @@ namespace fsp.ViewModels
                         new CreateTransactionRequest()
                         {
                             fspId = TdcFspId,
-                            eventDate = now,
+                            date = now,
                             eventJson = eventData,
-                            eventType = eventType,
+                            typeId = eventType,
+                            subjectId = $"{now}",
+                            amount = amount,
                             tdcEndpoint = TDCDockerEndPoint,
                             fspHash = ComputeHash($"{now}{eventData}")
                         }
@@ -393,13 +401,23 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("RefreshReport", () =>
             {
-                ReportData = NOT_SET;
-                string siteUrl = $"{url}/v2/transaction/report/{reportId}/status";
-                GetReportResult result =
-                    HttpClient.MakeGetRequest<GetReportResult>(siteUrl);
+                try
+                {
+                    ReportData = NOT_SET;
+                    string siteUrl = $"{url}/v2/transaction/report/{reportId}/status";
+                    GetReportResult result =
+                        HttpClient.MakeGetRequest<GetReportResult>(siteUrl);
 
-                ReportStatus = ACCEPTED;
-                ReportData = result.content;
+                    ReportStatus = ACCEPTED;
+                    ReportData = result.content;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.WriteLine($"Retrieve report error {ex.Message}");
+                    System.Diagnostics.Trace.WriteLineIf(ex.InnerException != null,
+                        $"     inner exception {ex.InnerException.Message}");
+
+                }
             });   
             
         }

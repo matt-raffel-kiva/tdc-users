@@ -22,6 +22,10 @@ making a payment, or late fees.
                 <TextBox Text="{Binding EventType}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
+                <TextBlock>Amount $:</TextBlock>
+                <TextBox Text="{Binding Amount}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
                 <TextBlock>Transaction Data:</TextBlock>
                 <TextBox Text="{Binding EventData}" />
             </StackPanel>
