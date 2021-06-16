@@ -22,6 +22,7 @@ namespace fsp.ViewModels
         private static string NOT_SET = "not set";
         private static string WAITING = "waiting";
         private static string ACCEPTED = "accepted";
+        private static string ERROR = "error";
         private string url = "http://localhost:3013";
         private string connectionId = NOT_SET;
         private string oneTimeValue = NOT_SET;
@@ -328,19 +329,26 @@ namespace fsp.ViewModels
                 TxId = WAITING;
                 TxStatus = WAITING;
                 string now = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-
+                EventData rawData = new EventData()
+                {
+                    Amount = amount,
+                    Date = now,
+                    TypeId = eventType,
+                    SubjectId = $"{now}"
+                };
+                string txData = rawData.ToJson();
                 CreateTransactionResult result =
                     HttpClient.MakePostRequest<CreateTransactionRequest, CreateTransactionResult>(siteUrl,
                         new CreateTransactionRequest()
                         {
                             fspId = TdcFspId,
-                            date = now,
-                            eventJson = eventData,
-                            typeId = eventType,
-                            subjectId = $"{now}",
-                            amount = amount,
+                            date = rawData.Date,
+                            eventJson = txData,
+                            typeId = rawData.TypeId,
+                            subjectId = rawData.SubjectId,
+                            amount = rawData.Amount,
                             tdcEndpoint = TDCDockerEndPoint,
-                            fspHash = ComputeHash($"{now}{eventData}")
+                            fspHash = ComputeHash($"{now}{txData}")
                         }
                     );
                 
@@ -407,6 +415,15 @@ namespace fsp.ViewModels
                     string siteUrl = $"{url}/v2/transaction/report/{reportId}/status";
                     GetReportResult result =
                         HttpClient.MakeGetRequest<GetReportResult>(siteUrl);
+
+                    if (null == result)
+                    {
+                        ReportStatus = ERROR;
+                        Status =
+                            "there was a non-http error trying to get report data.  check server logs for more information.";
+                        ReportData = NOT_SET;
+                        return;
+                    }
 
                     ReportStatus = ACCEPTED;
                     ReportData = result.content;
