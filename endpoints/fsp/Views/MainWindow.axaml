@@ -32,6 +32,9 @@
                 <TabItem Header="Tx Report">
                     <views:CreditReport />
                 </TabItem>
+                <TabItem Header="Tools">
+                    <views:Tools />
+                </TabItem>
             </TabControl>
         </DockPanel>
     </Border>

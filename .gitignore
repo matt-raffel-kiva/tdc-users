@@ -1,3 +1,5 @@
 .DS_Store
 .idea
+.vs/
+mono_crash.*.json
 node_modules

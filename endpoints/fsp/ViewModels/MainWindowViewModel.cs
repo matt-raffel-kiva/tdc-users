@@ -52,6 +52,8 @@ namespace fsp.ViewModels
         private ReactiveCommand<Unit, Unit> OnRefreshTransaction { get; }
         private ReactiveCommand<Unit, Unit> OnRefreshReport { get; }
         private ReactiveCommand<Unit, Unit> OnRetrieveReport { get; }
+        
+        private ReactiveCommand<Unit, Unit> OnGenerateFakeConnectionId { get; }
         #endregion
         
         #region public observable data
@@ -164,6 +166,7 @@ namespace fsp.ViewModels
             OnRefreshTransaction = ReactiveCommand.Create(RefreshTransaction);
             OnRefreshReport = ReactiveCommand.Create(RefreshReport);
             OnRetrieveReport = ReactiveCommand.Create(RetrieveReport);
+            OnGenerateFakeConnectionId = ReactiveCommand.Create(GenerateFakeConnectionId);
         }
         
         public bool CanOnConnectTDC()
@@ -237,6 +240,21 @@ namespace fsp.ViewModels
             {
                 StopProgressBar();
             }
+        }
+        #endregion
+        
+        #region private UI testing methods
+
+        private void GenerateFakeConnectionId()
+        {
+            ExecuteLongRunningJob("GenerateFakeConnectionId", () =>
+            {
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string result =
+                    HttpClient.MakeGetRequest(siteUrl);
+
+                ConnectionId = result;
+            });
         }
         #endregion
         
