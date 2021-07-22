@@ -10,9 +10,18 @@
             These functions are provided to help with testing.  Be aware! Using these
             could create unstable conditions in the system.
         </TextBlock>
+        <Label Content="Generate Fake Keys:" />
         <StackPanel Orientation="Horizontal">
-            <TextBlock>Generate Fake Connection Id:</TextBlock>
+            <TextBlock>Connection Id:</TextBlock>
             <Button Command="{Binding OnGenerateFakeConnectionId}">Go</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock>TdcTroId Id:</TextBlock>
+            <Button Command="{Binding OnGenerateFakeTdcTroId}">Go</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock>TdcFspId Id:</TextBlock>
+            <Button Command="{Binding OnGenerateFakeTdcFspId}">Go</Button>
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -54,6 +54,10 @@ namespace fsp.ViewModels
         private ReactiveCommand<Unit, Unit> OnRetrieveReport { get; }
         
         private ReactiveCommand<Unit, Unit> OnGenerateFakeConnectionId { get; }
+        
+        private ReactiveCommand<Unit, Unit> OnGenerateFakeTdcTroId { get; }
+        
+        private ReactiveCommand<Unit, Unit> OnGenerateFakeTdcFspId { get; }
         #endregion
         
         #region public observable data
@@ -167,6 +171,8 @@ namespace fsp.ViewModels
             OnRefreshReport = ReactiveCommand.Create(RefreshReport);
             OnRetrieveReport = ReactiveCommand.Create(RetrieveReport);
             OnGenerateFakeConnectionId = ReactiveCommand.Create(GenerateFakeConnectionId);
+            OnGenerateFakeTdcTroId = ReactiveCommand.Create(GenerateFakeTdcTroId);
+            OnGenerateFakeTdcFspId = ReactiveCommand.Create(GenerateFakeTdcFspId);
         }
         
         public bool CanOnConnectTDC()
@@ -254,6 +260,30 @@ namespace fsp.ViewModels
                     HttpClient.MakeGetRequest(siteUrl);
 
                 ConnectionId = result;
+            });
+        }
+
+        private void GenerateFakeTdcTroId()
+        {
+            ExecuteLongRunningJob("GenerateFakeTdcTroId", () =>
+            {
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string result =
+                    HttpClient.MakeGetRequest(siteUrl);
+
+                TdcTroId = result;
+            });
+        }
+
+        private void GenerateFakeTdcFspId()
+        {
+            ExecuteLongRunningJob("GenerateFakeTdcFspId", () =>
+            {
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string result =
+                    HttpClient.MakeGetRequest(siteUrl);
+
+                TdcFspId = result;
             });
         }
         #endregion
