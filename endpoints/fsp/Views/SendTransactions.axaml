@@ -18,12 +18,25 @@ making a payment, or late fees.
         </StackPanel>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
-                <TextBlock>Transaction Type:</TextBlock>
-                <TextBox Text="{Binding EventType}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Type Id:</TextBlock>
+                    <TextBox Text="{Binding TypeId}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Subject Id:</TextBlock>
+                    <TextBox Text="{Binding SubjectId}" />
+                </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock>Amount $:</TextBlock>
-                <TextBox Text="{Binding Amount}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Date:</TextBlock>
+                    <TextBox Text="{Binding Date}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Amount $:</TextBlock>
+                    <TextBox Text="{Binding Amount}" />
+                </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock>Transaction Data:</TextBlock>

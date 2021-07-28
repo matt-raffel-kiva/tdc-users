@@ -33,7 +33,9 @@ namespace fsp.ViewModels
         private string status = string.Empty;
         private string eventData = string.Empty;
         private string amount = string.Empty;
-        private string eventType = "payment";
+        private string typeId = "loan";
+        private string subjectId = "payment";
+        private DateTime date = DateTime.Now;
         private string reportId = NOT_SET;
         private string reportStatus = NOT_SET;
         private string reportData = NOT_SET;
@@ -132,12 +134,24 @@ namespace fsp.ViewModels
             set => this.RaiseAndSetIfChanged(ref eventData, value);
         }
         
-        public string EventType
+        public string TypeId
         {
-            get => eventType;
-            set => this.RaiseAndSetIfChanged(ref eventType, value);
+            get => typeId;
+            set => this.RaiseAndSetIfChanged(ref typeId, value);
         }
 
+        public string SubjectId
+        {
+            get => subjectId;
+            set => this.RaiseAndSetIfChanged(ref subjectId, value);
+        }
+
+        public DateTime Date
+        {
+            get => date;
+            set => this.RaiseAndSetIfChanged(ref date, value);
+        }
+        
         public string ReportId
         {
             get => reportId;
@@ -377,12 +391,13 @@ namespace fsp.ViewModels
                 TxId = WAITING;
                 TxStatus = WAITING;
                 string now = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-                EventData rawData = new EventData()
+                TransactionData rawData = new TransactionData()
                 {
-                    Amount = amount,
-                    Date = now,
-                    TypeId = eventType,
-                    SubjectId = $"{now}"
+                    Amount = this.Amount,
+                    Date = $"{this.Date}",
+                    TypeId = this.TypeId,
+                    SubjectId = this.SubjectId,
+                    EventData = this.EventData
                 };
                 string txData = rawData.ToJson();
                 CreateTransactionResult result =
