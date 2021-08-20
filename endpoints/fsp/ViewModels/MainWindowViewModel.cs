@@ -50,7 +50,7 @@ namespace fsp.ViewModels
         private ReactiveCommand<Unit, Unit> OnGetReport { get; }
         private ReactiveCommand<Unit, Unit> OnCreateTransaction { get; }
         
-        private ReactiveCommand<Unit, Unit> OnRefreshIds { get; }
+        private ReactiveCommand<Unit, Unit> OnRefreshOneTimeValue { get; }
         private ReactiveCommand<Unit, Unit> OnRefreshTransaction { get; }
         private ReactiveCommand<Unit, Unit> OnRefreshReport { get; }
         private ReactiveCommand<Unit, Unit> OnRetrieveReport { get; }
@@ -180,7 +180,7 @@ namespace fsp.ViewModels
             OnSendOneTimeValue = ReactiveCommand.Create(SendOneTimeValue);
             OnGetReport = ReactiveCommand.Create(GetReport);
             OnCreateTransaction = ReactiveCommand.Create(CreateTransaction);
-            OnRefreshIds = ReactiveCommand.Create(RefreshIds);
+            OnRefreshOneTimeValue = ReactiveCommand.Create(RefreshOneTimeValue);
             OnRefreshTransaction = ReactiveCommand.Create(RefreshTransaction);
             OnRefreshReport = ReactiveCommand.Create(RefreshReport);
             OnRetrieveReport = ReactiveCommand.Create(RetrieveReport);
@@ -420,23 +420,24 @@ namespace fsp.ViewModels
             });
         }
 
-        private void RefreshIds()
+        private void RefreshOneTimeValue()
         {
-            ExecuteLongRunningJob("RefreshIds", () =>
+            ExecuteLongRunningJob("RefreshOneTimeValue", () =>
             {
                 string siteUrl = $"{url}/v2/transaction/ids/{oneTimeValue}";
-                RefreshIdResult result =
-                    HttpClient.MakeGetRequest<RefreshIdResult>(siteUrl);
-                if (null == result)
+                IssueOneTimeKeyResponse result =
+                    HttpClient.MakeGetRequest<IssueOneTimeKeyResponse>(siteUrl);
+                if (null == result || 0 == string.Compare(result.state, "error", true))
                 {
                     TdcFspId = "RefreshIds got no results back";
                     return;
                 }
 
-                if (!string.IsNullOrEmpty(result.fsp_id))
-                    TdcFspId = result.fsp_id;
-                if (!string.IsNullOrEmpty(result.tdc_id))
-                    TdcTroId = result.tdc_id;
+
+                if (!string.IsNullOrEmpty(result.tdcFspId))
+                    TdcFspId = result.tdcFspId;
+                if (!string.IsNullOrEmpty(result.tdcTroId))
+                    TdcTroId = result.tdcTroId;
             });
         }
 
