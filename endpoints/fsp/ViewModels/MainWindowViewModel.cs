@@ -449,8 +449,11 @@ namespace fsp.ViewModels
                 RefreshTransactionResult result =
                     HttpClient.MakeGetRequest<RefreshTransactionResult>(siteUrl);
 
-                // TODO: like to make this more detailed.  for now, if we get a transaction back
-                // then we can assume its accepted
+                if (null == result || 0 == string.Compare(result.state, "error", true))
+                {
+                    TxStatus = "error";
+                    return;
+                }
                 TxStatus = ACCEPTED;
             });            
         }
