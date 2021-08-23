@@ -492,8 +492,18 @@ namespace fsp.ViewModels
                         return;
                     }
 
-                    ReportStatus = ACCEPTED;
-                    ReportData = result.content;
+                    if (0 == string.Compare(result.state, "completed", true))
+                    {
+                        ReportStatus = ACCEPTED;
+                        ReportData = result.content;
+                    }
+                    else
+                    {
+                        ReportStatus = ERROR;
+                        Status =
+                            "the report was not found.";
+                        ReportData = NOT_SET;
+                    }
                 }
                 catch (Exception ex)
                 {

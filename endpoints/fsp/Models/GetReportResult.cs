@@ -5,9 +5,10 @@ namespace fsp.Models
     public class GetReportResult
     {
         public int id { get; set; }
-        public string fsp_id { get; set; }
-        public string report_id { get; set; }
-        public DateTime request_date { get; set; }
+        public string fspId { get; set; }
+        public string reportId { get; set; }
+        public DateTime requestDate { get; set; }
         public string content { get; set; }
+        public string state { get; set; }
     }
 }
