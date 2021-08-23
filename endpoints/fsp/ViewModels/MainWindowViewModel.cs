@@ -60,6 +60,7 @@ namespace fsp.ViewModels
         private ReactiveCommand<Unit, Unit> OnGenerateFakeTdcTroId { get; }
         
         private ReactiveCommand<Unit, Unit> OnGenerateFakeTdcFspId { get; }
+        private ReactiveCommand<Unit, Unit> OnGenerateFakeReportId { get; }
         #endregion
         
         #region public observable data
@@ -187,6 +188,7 @@ namespace fsp.ViewModels
             OnGenerateFakeConnectionId = ReactiveCommand.Create(GenerateFakeConnectionId);
             OnGenerateFakeTdcTroId = ReactiveCommand.Create(GenerateFakeTdcTroId);
             OnGenerateFakeTdcFspId = ReactiveCommand.Create(GenerateFakeTdcFspId);
+            OnGenerateFakeReportId = ReactiveCommand.Create(GenerateFakeReportId);
         }
         
         public bool CanOnConnectTDC()
@@ -269,7 +271,7 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("GenerateFakeConnectionId", () =>
             {
-                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimekey";
                 string result =
                     HttpClient.MakeGetRequest(siteUrl);
 
@@ -281,7 +283,7 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("GenerateFakeTdcTroId", () =>
             {
-                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimekey";
                 string result =
                     HttpClient.MakeGetRequest(siteUrl);
 
@@ -293,11 +295,23 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("GenerateFakeTdcFspId", () =>
             {
-                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimekey";
                 string result =
                     HttpClient.MakeGetRequest(siteUrl);
 
                 TdcFspId = result;
+            });
+        }
+
+        private void GenerateFakeReportId()
+        {
+            ExecuteLongRunningJob("GenerateFakeReportId", () =>
+            {
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimekey";
+                string result =
+                    HttpClient.MakeGetRequest(siteUrl);
+
+                ReportId = result;
             });
         }
         #endregion
@@ -326,7 +340,7 @@ namespace fsp.ViewModels
         {
             ExecuteLongRunningJob("GenerateValue", () =>
             {
-                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimekey";
                 string result =
                     HttpClient.MakeGetRequest(siteUrl);
 

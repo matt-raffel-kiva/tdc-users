@@ -23,5 +23,9 @@
             <TextBlock>TdcFspId Id:</TextBlock>
             <Button Command="{Binding OnGenerateFakeTdcFspId}">Go</Button>
         </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock>Report Id:</TextBlock>
+            <Button Command="{Binding OnGenerateFakeReportId}">Go</Button>
+        </StackPanel>
     </StackPanel>
 </UserControl>
