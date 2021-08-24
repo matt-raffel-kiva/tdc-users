@@ -32,9 +32,7 @@ namespace tro.ViewModels
         private ReactiveCommand<Unit, Unit> OnConnectToTDC { get; }
         private ReactiveCommand<Unit, Unit> OnGenerateValue { get; }
         private ReactiveCommand<Unit, Unit> OnSendOneTimeValue { get; }
-        private ReactiveCommand<Unit, Unit> OnGetReport { get; }
-        private ReactiveCommand<Unit, Unit> OnCreateTransaction { get; }
-        private ReactiveCommand<Unit, Unit> OnRefreshIds { get; }
+        private ReactiveCommand<Unit, Unit> OnRefreshOneTimeKeyIds { get; }
         private ReactiveCommand<Unit, Unit> OnStartCitizen { get; }
         private ReactiveCommand<Unit, Unit> OnStopCitizen { get; }
         #endregion
@@ -131,9 +129,7 @@ namespace tro.ViewModels
             OnConnectToTDC = ReactiveCommand.Create(ConnectTDC);
             OnGenerateValue = ReactiveCommand.Create(GenerateValue);
             OnSendOneTimeValue = ReactiveCommand.Create(SendOneTimeValue);
-            OnGetReport = ReactiveCommand.Create(GetReport);
-            OnCreateTransaction = ReactiveCommand.Create(CreateTransaction);
-            OnRefreshIds = ReactiveCommand.Create(RefreshIds);
+            OnRefreshOneTimeKeyIds = ReactiveCommand.Create(RefreshOneTimeKeyIds);
             OnStartCitizen = ReactiveCommand.Create(StartCitizen);
             OnStopCitizen = ReactiveCommand.Create(StopCitizen);
         }
@@ -289,53 +285,26 @@ namespace tro.ViewModels
                 });
         }
 
-        [Obsolete]
-        private void GetReport()
-        {
-            ExecuteLongRunningJob("GetReport", () =>
-            {
-                string siteUrl = $"{this.url}/v2/transaction/report";
-
-                string result =
-                    HttpClient.MakePostRequest<GetReportRequest>(siteUrl,
-                        new GetReportRequest()
-                        {
-                            tdcFspId = tdcFspId,
-                            tdcTroId = tdcTroId,
-                            tdcEndpoint = TDCDockerEndPoint
-                        }
-                    );
-            });
-        }
-        
-        [Obsolete]
-        private void CreateTransaction()
-        {
-            ExecuteLongRunningJob("CreateTransaction", () =>
-            {
-                string siteUrl = $"{this.url}/v2/transaction/createTransaction";
-
-                string result =
-                    HttpClient.MakePostRequest<GetReportRequest>(siteUrl,
-                        new GetReportRequest()
-                        {
-                            tdcFspId = tdcFspId,
-                            tdcTroId = tdcTroId,
-                            tdcEndpoint = TDCDockerEndPoint
-                        }
-                    );
-            });
-        }
-
-        private void RefreshIds()
+        private void RefreshOneTimeKeyIds()
         {
             ExecuteLongRunningJob("GenerateValue", () =>
             {
-                string siteUrl = $"{TDCLocalEndpoint}/v2/transactions/ids/{oneTimeValue}";
-                string result =
-                    HttpClient.MakeGetRequest(siteUrl);
+                string siteUrl = $"{GuardianshipEndpoint}/v2/transaction/{AgentId}/ids/";
+                IssueOneTimeKeyResponse result =
+                    HttpClient.MakePostRequest<IssueOneTimeKeyRequest, IssueOneTimeKeyResponse>(siteUrl,
+                        new IssueOneTimeKeyRequest()
+                        {
+                            connectionId = connectionId,
+                            oneTimeKey = oneTimeValue,
+                            tdcEndpoint = TDCDockerEndPoint
+                        }
+                    );
 
                 System.Diagnostics.Debug.WriteLine($"RefreshIds got back {result}");
+                if (!string.IsNullOrEmpty(result.tdcFspId))
+                    TdcFspId = result.tdcFspId;
+                if (!string.IsNullOrEmpty(result.tdcTroId))
+                    TdcTroId = result.tdcTroId;
             });
         }
         #endregion

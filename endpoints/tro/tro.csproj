@@ -34,10 +34,6 @@
         <DependentUpon>MainWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Views\SendTransactions.axaml.cs">
-        <DependentUpon>SendTransactions.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Views\TDCConnection.axaml.cs">
         <DependentUpon>TDCConnection.axaml</DependentUpon>
         <SubType>Code</SubType>
