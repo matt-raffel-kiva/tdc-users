@@ -482,13 +482,13 @@ namespace fsp.ViewModels
                 GetReportResult result =
                     HttpClient.MakeGetRequest<GetReportResult>(siteUrl);
                 
-                ReportStatus = ACCEPTED;
+                ReportStatus = result.state;
             });       
         }
 
         private void RetrieveReport()
         {
-            ExecuteLongRunningJob("RefreshReport", () =>
+            ExecuteLongRunningJob("RetrieveReport", () =>
             {
                 try
                 {
@@ -500,9 +500,8 @@ namespace fsp.ViewModels
                     if (null == result)
                     {
                         ReportStatus = ERROR;
-                        Status =
+                        ReportData =
                             "there was a non-http error trying to get report data.  check server logs for more information.";
-                        ReportData = NOT_SET;
                         return;
                     }
 
@@ -514,9 +513,7 @@ namespace fsp.ViewModels
                     else
                     {
                         ReportStatus = ERROR;
-                        Status =
-                            "the report was not found.";
-                        ReportData = NOT_SET;
+                        ReportData = "the report was not found.";
                     }
                 }
                 catch (Exception ex)
