@@ -249,11 +249,14 @@ namespace tro.ViewModels
             });
         }
         
+        /// <summary>
+        /// Gets a unique ID from the TDC service for use with the onetimekey functionality
+        /// </summary>
         private void GenerateValue()
         {
             ExecuteLongRunningJob("GenerateValue", () =>
             {
-                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimkey";
+                string siteUrl = $"{TDCLocalEndpoint}/v2/fsp/register/onetimekey";
                 string result =
                     HttpClient.MakeGetRequest(siteUrl);
 
