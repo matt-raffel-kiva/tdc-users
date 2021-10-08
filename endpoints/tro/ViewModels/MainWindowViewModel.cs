@@ -304,10 +304,8 @@ namespace tro.ViewModels
                     );
 
                 System.Diagnostics.Debug.WriteLine($"RefreshIds got back {result}");
-                if (!string.IsNullOrEmpty(result.tdcFspId))
-                    TdcFspId = result.tdcFspId;
-                if (!string.IsNullOrEmpty(result.tdcTroId))
-                    TdcTroId = result.tdcTroId;
+                if (!string.IsNullOrEmpty(result.id))
+                    TdcTroId = result.id;
             });
         }
         #endregion
