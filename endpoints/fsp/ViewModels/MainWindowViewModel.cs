@@ -479,8 +479,8 @@ namespace fsp.ViewModels
                 ReportStatus = WAITING;
                 ReportData = NOT_SET;
                 string siteUrl = $"{url}/v2/transaction/report/{reportId}/status";
-                GetReportResult result =
-                    HttpClient.MakeGetRequest<GetReportResult>(siteUrl);
+                GetReportResult<string> result =
+                    HttpClient.MakeGetRequest<GetReportResult<string>>(siteUrl);
                 
                 ReportStatus = result.state;
             });       
@@ -494,8 +494,8 @@ namespace fsp.ViewModels
                 {
                     ReportData = NOT_SET;
                     string siteUrl = $"{url}/v2/transaction/report/{reportId}/status";
-                    GetReportResult result =
-                        HttpClient.MakeGetRequest<GetReportResult>(siteUrl);
+                    GetReportResult<string> result =
+                        HttpClient.MakeGetRequest<GetReportResult<string>>(siteUrl);
 
                     if (null == result)
                     {
